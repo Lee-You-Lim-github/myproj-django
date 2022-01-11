@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop',
     'blog',
+    'diary',
     'rest_framework',
     'corsheaders',
 ]
