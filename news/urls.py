@@ -5,7 +5,7 @@ from news.views import ArticleVeiwSet
 app_name = 'news'
 
 router = DefaultRouter()
-router.register("news", ArticleVeiwSet)
+router.register("articles", ArticleVeiwSet)
 
 urlpatterns = [
     path('api/', include(router.urls))
