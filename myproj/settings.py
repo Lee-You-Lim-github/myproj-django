@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'shop',
     'blog',
     'diary',
+    'news'
     'rest_framework',
     'corsheaders',
 ]
