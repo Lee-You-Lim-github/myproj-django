@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'blog',
     'diary',
     'news',
+    'Tour',
     'rest_framework',
     'corsheaders',
 ]
