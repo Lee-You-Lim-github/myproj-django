@@ -8,5 +8,5 @@ router = DefaultRouter()
 router.register("spots", SpotViewSet)
 
 urlpatterns = [
-    path('/api/', include(router.urls)),
+    path('api/', include(router.urls)),
 ]
