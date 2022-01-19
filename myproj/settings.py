@@ -11,21 +11,29 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from datetime import timedelta
+from environ import Env
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = Env()
+
+dot_env_path = BASE_DIR / ".env"
+if dot_env_path.exists():
+    with dot_env_path.open(encoding="utf-8") as f:
+        env.read_env(f, overwrite=True)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9huvv^149z)((0@jiq)7@r($x$fc5wch#3y)be4k1-xq+k_c*y'
+SECRET_KEY = env.str("SECRET_KEY", default="---- SECRET_KEY ----")  # .env에서 SECRET_KEY의 입력값을 문자열로 읽어옴.
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [env.list("ALLOWED_HOSTS", default=[])]
 
 # Application definition
 
@@ -83,10 +91,12 @@ WSGI_APPLICATION = 'myproj.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    # DATABASE_URL 환경변수를 파싱하여 dict 객체를 생성해 줌.
+    'default': env.db(default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'),
 }
 
 # Password validation
@@ -133,18 +143,26 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000"
-]
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=["http://localhost:3000"])
 
 # djangorestframework
 # DRF의 디폴트 설정을 재정의  --> []로 지정
 # AUTHENTICATION : 인증 / 인증 방법으로 Session, JWT을 쓰겠다.
+
+ACCESS_TOKEN_LIFETIME_DAYS = env.int("ACCESS_TOKEN_LIFETIME_DAYS", default=0)
+ACCESS_TOKEN_LIFETIME_HOUR = env.int("ACCESS_TOKEN_LIFETIME_HOUR", default=0)
+# 디폴트 만료 시간 : 5분
+ACCESS_TOKEN_LIFETIME_MINUTES = env.int("ACCESS_TOKEN_LIFETIME_MINUTES", default=5)
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     # 디폴트 만료 시간 : 5분
-    'ACCESS_TOKEN_LIFETIME' : timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(
+        days=ACCESS_TOKEN_LIFETIME_DAYS,
+        hours=ACCESS_TOKEN_LIFETIME_HOUR,
+        minutes=ACCESS_TOKEN_LIFETIME_MINUTES,
+    ),
 }
