@@ -138,6 +138,8 @@ STATIC_URL = '/static/'
 # 한 곳에 모아서 저장할 디렉토리 경로
 # 배포 시에만 의미있는 설정정STATIC_ROOT = BASE_DIR / 'static'
 # 한 곳으로 모으는 명려 : python magage.py collectstatic
+STATIC_ROOT = BASE_DIR / 'static'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
